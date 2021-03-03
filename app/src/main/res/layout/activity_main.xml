@@ -78,6 +78,21 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
+            android:id="@+id/btn_lock_memory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:background="@color/white"
+            android:padding="16dp"
+            android:text="@string/button_apply_pressure"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toTopOf="@+id/btn_refresh_stats"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.805"
+            app:layout_constraintStart_toEndOf="@+id/btn_free_memory" />
+
+        <Button
             android:id="@+id/btn_run_as_service"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -104,6 +119,22 @@
             app:layout_constraintBottom_toTopOf="@+id/btn_run_as_service"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/edit_txt_pressure"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:autofillHints="80"
+            android:ems="10"
+            android:hint="@string/edit_text_hint_pressure"
+            android:inputType="numberDecimal"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toTopOf="@+id/btn_lock_memory"
+            app:layout_constraintEnd_toEndOf="@+id/btn_lock_memory"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@+id/btn_lock_memory"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

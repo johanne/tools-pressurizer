@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Pressurizer</string>
     <string name="memory_header">Memory Stats</string>
+    <string name="edit_text_hint_pressure">Percent to Pressure</string>
+    <string name="button_apply_pressure">Apply Memory Pressure</string>
     <string name="button_free_memory">Free Memory</string>
     <string name="button_refresh_stats">Refresh Stats</string>
     <string name="button_service">Run as foreground service</string>

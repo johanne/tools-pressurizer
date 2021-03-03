@@ -19,9 +19,46 @@ char *memalloc[ALLOCATION_MAX];
 int counter;
 
 long getFreeMemory() {
-    long pages = sysconf(_SC_AVPHYS_PAGES);
-    long page_size = getpagesize();
-    return pages * page_size;
+    FILE *meminfo = fopen("/proc/meminfo", "r");
+    if (meminfo == 0) {
+        ALOG("Cannot open /proc/meminfo");
+        return -1;
+    }
+
+    // estimate free mem instead
+    // need to get MemFree, Active(file), Inactive(file), SReclaimable
+    const char *memFree = "MemFree";
+    const char *activeFile = "Active(file)";
+    const char *inactiveFile = "Inactive(file)";
+    const char *sReclaimable = "SReclaimable";
+    // skip low watermarks because we don't have access to /proc/zoneinfo
+
+    int numItemsToFind = 3;
+    char * line = nullptr;
+    size_t len = 0;
+    long freeMemory = 0;
+    while(numItemsToFind > 0 && getline(&line, &len, meminfo) != -1) {
+        if (strstr(line, memFree) || strstr(line, activeFile) || strstr(line, inactiveFile)
+            || strstr(line, sReclaimable)) {
+            // always assume second is the free memory
+            ALOG("Found line: %s", line);
+            strtok(line, " ");
+            char *memoryValue = strtok(nullptr, " ");
+            ALOG("MemoryValue line: %s", memoryValue);
+            long toAdd = (strtol(memoryValue, nullptr, 10) * 1024);
+            // overshoot this since we can't get to /proc/zoneinfo
+            if (strstr(line, sReclaimable)) {
+                toAdd /= 2;
+            }
+            freeMemory += toAdd;
+            numItemsToFind--;
+        }
+    }
+
+    fclose(meminfo);
+    if (line)
+        free(line);
+    return freeMemory;
 }
 
 long getTotalMemory() {
@@ -31,12 +68,15 @@ long getTotalMemory() {
 }
 
 long getUsedMemory() {
+    if (getFreeMemory() == -1) {
+        return -1;
+    }
     return getTotalMemory() - getFreeMemory();
 }
 
 void *memoryMonitorPercent(void *args) {
     JNIEnv *env;
-    (*jvm).AttachCurrentThread(&env, NULL);
+    (*jvm).AttachCurrentThread(&env, nullptr);
     float percent = (*(float *) args);
     ALOG("Page Size Raw: %d", getpagesize());
     ALOG("Chunks in MB: %d", CHUNKS / MB);
@@ -102,7 +142,7 @@ Java_com_jdemetria_tools_pressuriser_MemoryPressureNative_00024Companion_lockPer
     percentage = (float *) malloc(sizeof(float));
     memcpy(percentage, &percent, sizeof(float));
     pthread_create(&monitorThread, NULL, &memoryMonitorPercent, percentage);
-    return monitorThread;
+    return 0;
 }
 
 extern "C"
