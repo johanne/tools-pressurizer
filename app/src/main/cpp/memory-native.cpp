@@ -74,6 +74,20 @@ long getUsedMemory() {
     return getTotalMemory() - getFreeMemory();
 }
 
+void lockMemory(long memoryToUse) {
+    int iterations = memoryToUse / CHUNKS;
+    if (iterations > 0) {
+        ALOG("Memory to capture: %ld", memoryToUse / MB);
+        ALOG("Iterations to capture all memory %d", iterations);
+        for (int i = 0; i < iterations && counter < ALLOCATION_MAX; counter++, i++) {
+            memalloc[counter] = (char *) malloc(CHUNKS);
+            memset(memalloc[counter], 'a', CHUNKS);
+            mlock(memalloc[counter], CHUNKS);
+        }
+        ALOG("Current allocation count: %d", counter);
+    }
+}
+
 void *memoryMonitorPercent(void *args) {
     JNIEnv *env;
     (*jvm).AttachCurrentThread(&env, nullptr);
@@ -83,18 +97,10 @@ void *memoryMonitorPercent(void *args) {
     ALOG("Percent of total memory to capture: %f", percent);
     while (!exitMonitorThread) {
         long totalToUseUp = (long) (percent * getTotalMemory());
+        ALOG("Total Memory To Use Up in MB: %ld", totalToUseUp / MB);
         long memoryToUse = totalToUseUp - getUsedMemory();
-        int iterations = memoryToUse / CHUNKS;
-        if (iterations > 0) {
-            ALOG("Total Memory To Use Up in MB: %ld", totalToUseUp / MB);
-            ALOG("Memory to capture: %ld", memoryToUse / MB);
-            ALOG("Iterations to capture all memory %d", iterations);
-            for (int i = 0; i < iterations && counter < ALLOCATION_MAX; counter++, i++) {
-                memalloc[counter] = (char *) malloc(CHUNKS);
-                memset(memalloc[counter], 'a', CHUNKS);
-                mlock(memalloc[counter], CHUNKS);
-            }
-            ALOG("Current allocation count: %d", counter);
+        lockMemory(memoryToUse);
+        if (memoryToUse / CHUNKS > 0) {
             sleep(1); // sleep for a shorter time so that we can quickly allocate memory
         } else {
             sleep(5); // so that we don't use up too much CPU
@@ -104,6 +110,8 @@ void *memoryMonitorPercent(void *args) {
     (*jvm).DetachCurrentThread();
     pthread_exit(NULL);
 }
+
+
 
 
 extern "C"
@@ -149,17 +157,19 @@ extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_jdemetria_tools_pressuriser_MemoryPressureNative_00024Companion_freeLockedMemory(
         JNIEnv *env, jobject thiz) {
-    if (monitorThread == -1) {
+    if (monitorThread != -1) {
+        ALOG("Freeing memory.");
+        exitMonitorThread = true;
+        pthread_join(monitorThread, NULL);
+        monitorThread = -1;
+        ALOG("pthread_join success.");
+        ALOG("Freeing malloc'd memory[array size]: %d", counter);
+    }
+    if (counter <= 0) {
         ALOG("Nothing to free.");
+        counter = 0;
         return false;
     }
-    ALOG("Freeing memory.");
-    exitMonitorThread = true;
-    pthread_join(monitorThread, NULL);
-    monitorThread = -1;
-    ALOG("pthread_join success.");
-    ALOG("Freeing malloc'd memory[array size]: %d", counter);
-
     while (counter-- > 0) {
         munlock(memalloc[counter], CHUNKS);
         free(memalloc[counter]);
@@ -168,4 +178,31 @@ Java_com_jdemetria_tools_pressuriser_MemoryPressureNative_00024Companion_freeLoc
     ALOG("Successfully freed all memory.");
 
     return true;
+}
+
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_com_jdemetria_tools_pressuriser_MemoryPressureNative_00024Companion_lockMemoryInMB(JNIEnv *env,
+                                                                                        jobject thiz,
+                                                                                        jlong mem_in_mb) {
+    mem_in_mb *= MB;
+    lockMemory(mem_in_mb);
+    return 0;
+}
+
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_com_jdemetria_tools_pressuriser_MemoryPressureNative_00024Companion_leaveMemoryInMB(
+        JNIEnv *env, jobject thiz, jlong mem_in_mb) {
+    mem_in_mb *= MB;
+    long freeMemory = getFreeMemory();
+    ALOG("Memory to leave %ld", mem_in_mb);
+    ALOG("Free Memory %ld", freeMemory);
+    ALOG("Remaining Memory %ld", mem_in_mb - freeMemory);
+
+    if (freeMemory < mem_in_mb) {
+        return 0;
+    }
+    lockMemory(freeMemory - mem_in_mb);
+    return freeMemory - mem_in_mb;
 }

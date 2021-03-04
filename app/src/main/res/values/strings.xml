@@ -1,9 +1,14 @@
 <resources>
     <string name="app_name">Pressurizer</string>
     <string name="memory_header">Memory Stats</string>
-    <string name="edit_text_hint_pressure">Percent to Pressure</string>
+    <string name="edit_text_hint_percent_pressure">Percent to\n Pressure</string>
+    <string name="edit_text_hint_total_memory">Memory in MB\nto consume</string>
+    <string name="edit_text_hint_memory_to_leave">Memory in MB\n to keep free</string>
     <string name="button_apply_pressure">Apply Memory Pressure</string>
     <string name="button_free_memory">Free Memory</string>
     <string name="button_refresh_stats">Refresh Stats</string>
     <string name="button_service">Run as foreground service</string>
+    <string name="radio_button_memory_in_mb">Memory in MB</string>
+    <string name="radio_button_memory_to_leave">Memory to keep free in MB</string>
+    <string name="radio_button_percent">Percent of Total Memory</string>
 </resources>

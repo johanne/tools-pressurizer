@@ -17,6 +17,16 @@ class MemoryPressureNative {
         external fun lockPercentOfMemory(percent: Float): Long
 
         /**
+         * Returns 0 given a successful call to lock [memInMb] of memory.
+         */
+        external fun lockMemoryInMB(memInMb: Long): Long
+
+        /**
+         * Returns 0 given a successful call to only leave [memInMb] free.
+         */
+        external fun leaveMemoryInMB(memInMb: Long): Long
+
+        /**
          * Returns true if the call to free the memory is successful, false otherwise.
          */
         external fun freeLockedMemory(): Boolean

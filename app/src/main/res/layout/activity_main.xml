@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/material_on_surface_stroke"
     android:orientation="vertical"
-    android:weightSum="2"
+    android:weightSum="3"
     tools:context=".MainActivity">
 
 
@@ -13,14 +14,14 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1.5"
+        android:layout_weight="2.5"
         android:background="#01579B">
 
         <TextView
             android:id="@+id/txt_memory_stats_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="8dp"
             android:text="@string/memory_header"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="#FFFFFF"
@@ -52,6 +53,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -65,76 +78,104 @@
             android:id="@+id/btn_free_memory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="8dp"
             android:background="@color/white"
             android:padding="16dp"
             android:text="@string/button_free_memory"
             android:textAlignment="center"
-            app:layout_constraintBottom_toTopOf="@+id/btn_refresh_stats"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/edit_txt_pressure"
+            app:layout_constraintEnd_toEndOf="@+id/btn_refresh_stats"
+            app:layout_constraintStart_toStartOf="@+id/btn_refresh_stats"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btn_lock_memory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:background="@color/white"
             android:padding="16dp"
             android:text="@string/button_apply_pressure"
             android:textAlignment="center"
-            app:layout_constraintBottom_toTopOf="@+id/btn_refresh_stats"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.805"
-            app:layout_constraintStart_toEndOf="@+id/btn_free_memory" />
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_run_as_service"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/btn_run_as_service"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
             android:background="#FFFFFF"
             android:padding="16dp"
             android:text="@string/button_service"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/btn_refresh_stats"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="16dp"
             android:background="#FFFFFF"
             android:padding="16dp"
             android:text="@string/button_refresh_stats"
-            app:layout_constraintBottom_toTopOf="@+id/btn_run_as_service"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_run_as_service"
             app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
             android:id="@+id/edit_txt_pressure"
-            android:layout_width="0dp"
-            android:layout_height="65dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:autofillHints="80"
-            android:ems="10"
-            android:hint="@string/edit_text_hint_pressure"
+            android:ems="8"
+            android:hint="@string/edit_text_hint_percent_pressure"
             android:inputType="numberDecimal"
             android:textAlignment="center"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_refresh_stats"
+            app:layout_constraintEnd_toStartOf="@+id/btn_lock_memory"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:drawable/editbox_background"
             app:layout_constraintBottom_toTopOf="@+id/btn_lock_memory"
-            app:layout_constraintEnd_toEndOf="@+id/btn_lock_memory"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="@+id/btn_lock_memory"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <RadioButton
+                android:id="@+id/radio_btn_percent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/material_on_surface_stroke"
+                android:text="@string/radio_button_percent" />
+
+            <RadioButton
+                android:id="@+id/radio_btn_mem_in_mb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_button_memory_in_mb" />
+
+            <RadioButton
+                android:id="@+id/radio_btn_to_leave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_button_memory_to_leave" />
+        </RadioGroup>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
