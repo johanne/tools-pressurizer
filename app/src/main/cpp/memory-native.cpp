@@ -77,7 +77,7 @@ long getUsedMemory() {
 void lockMemory(long memoryToUse) {
     int iterations = memoryToUse / CHUNKS;
     if (iterations > 0) {
-        ALOG("Memory to capture: %ld", memoryToUse / MB);
+        ALOG("Memory to capture: %ld MB", memoryToUse / MB);
         ALOG("Iterations to capture all memory %d", iterations);
         for (int i = 0; i < iterations && counter < ALLOCATION_MAX; counter++, i++) {
             memalloc[counter] = (char *) malloc(CHUNKS);
@@ -198,7 +198,7 @@ Java_com_jdemetria_tools_pressuriser_MemoryPressureNative_00024Companion_leaveMe
     long freeMemory = getFreeMemory();
     ALOG("Memory to leave %ld", mem_in_mb);
     ALOG("Free Memory %ld", freeMemory);
-    ALOG("Remaining Memory %ld", mem_in_mb - freeMemory);
+    ALOG("Remaining Memory %lld", freeMemory - mem_in_mb);
 
     if (freeMemory < mem_in_mb) {
         return 0;

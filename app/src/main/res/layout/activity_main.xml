@@ -87,7 +87,7 @@
             app:layout_constraintBottom_toTopOf="@+id/edit_txt_pressure"
             app:layout_constraintEnd_toEndOf="@+id/btn_refresh_stats"
             app:layout_constraintStart_toStartOf="@+id/btn_refresh_stats"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/radio_group" />
 
         <Button
             android:id="@+id/btn_lock_memory"

@@ -2,6 +2,7 @@ package com.jdemetria.tools.pressuriser
 
 import android.app.Activity
 import android.app.ActivityManager
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.widget.*
@@ -14,6 +15,7 @@ class MainActivity : Activity() {
     private lateinit var refreshStatsButton: Button
     private lateinit var freeMemoryButton: Button
     private lateinit var applyPressureButton: Button
+    private lateinit var runAsServiceButton: Button
     private lateinit var percentPressureEditText: EditText
     private lateinit var percentRadioButton: RadioButton
     private lateinit var memoryToConsumeRadioButton: RadioButton
@@ -33,6 +35,11 @@ class MainActivity : Activity() {
         refreshStatsButton = findViewById(R.id.btn_refresh_stats)
         freeMemoryButton = findViewById(R.id.btn_free_memory)
         applyPressureButton = findViewById(R.id.btn_lock_memory)
+        runAsServiceButton = findViewById(R.id.btn_run_as_service)
+        runAsServiceButton.setOnClickListener {
+            startForegroundService(Intent(this, MemoryPressureService::class.java))
+            finish()
+        }
         refreshStatsButton.setOnClickListener {
             refreshStats()
         }
