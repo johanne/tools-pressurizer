@@ -33,7 +33,7 @@ long getFreeMemory() {
     const char *sReclaimable = "SReclaimable";
     // skip low watermarks because we don't have access to /proc/zoneinfo
 
-    int numItemsToFind = 3;
+    int numItemsToFind = 4;
     char * line = nullptr;
     size_t len = 0;
     long freeMemory = 0;
